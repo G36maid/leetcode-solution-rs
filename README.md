@@ -1,6 +1,6 @@
 # LeetCode Solutions in Rust 🦀
 
-A modern, organized collection of LeetCode problem solutions written in Rust using the 2018+ module system.
+A modern, organized collection of LeetCode problem solutions written in Rust using the `impl Solution` pattern that matches LeetCode's official format.
 
 ## Project Structure
 
@@ -8,13 +8,45 @@ A modern, organized collection of LeetCode problem solutions written in Rust usi
 leetcode/
 ├── Cargo.toml          # Project configuration
 ├── README.md           # This file
-├── template.rs         # Template for new problems
+├── AGENTS.md           # Detailed guidelines for AI agents
+├── template/
+│   └── template.rs     # Template for new problems
 ├── src/
 │   ├── lib.rs         # Common utilities (ListNode, TreeNode, helpers)
 │   └── bin/           # Individual problem solutions
 │       ├── p0001.rs   # Problem 1: Two Sum
 │       ├── p0002.rs   # Problem 2: Add Two Numbers
+│       ├── p3025.rs   # Problem 3025: Find the Number of Ways to Place People I
 │       └── ...        # More problems
+```
+
+## Code Structure
+
+All solutions follow LeetCode's standard `impl Solution` pattern:
+
+```rust
+struct Solution;
+
+impl Solution {
+    /// Main solution method with complexity analysis
+    ///
+    /// Time Complexity: O(n)
+    /// Space Complexity: O(1)
+    pub fn solution_name(/* parameters */) -> /* return type */ {
+        // Implementation here
+    }
+    
+    /// Alternative approach (if applicable)
+    #[allow(dead_code)]
+    pub fn solution_name_alt(/* parameters */) -> /* return type */ {
+        // Alternative implementation
+    }
+    
+    /// Helper methods (private)
+    fn helper_method(/* parameters */) -> /* return type */ {
+        // Helper implementation
+    }
+}
 ```
 
 ## Quick Start
@@ -27,6 +59,9 @@ cargo run --bin p0001
 
 # Run problem 2
 cargo run --bin p0002
+
+# Run problem 3025
+cargo run --bin p3025
 ```
 
 ### Running Tests
@@ -38,30 +73,40 @@ cargo test
 # Run tests for a specific problem
 cargo test p0001
 
-# Run tests with output
+# Run tests with output showing println! statements
 cargo test -- --nocapture
+
+# Run a specific test function
+cargo test test_example1
 ```
 
 ### Adding a New Problem
 
 1. Copy the template:
    ```bash
-   cp template.rs src/bin/p0042.rs
+   cp template/template.rs src/bin/p0042.rs
    ```
 
-2. Update the problem details in the file header
+2. Update the problem details:
+   - Replace problem number and title in file header
+   - Add problem description and examples
+   - Update method names to match the problem
 
-3. Implement your solution in the `solution()` function
+3. Implement your solution:
+   - Replace placeholder methods with actual implementation
+   - Add complexity analysis in documentation
+   - Include alternative approaches if beneficial
 
-4. Add test cases
+4. Add comprehensive tests:
+   - Test all provided examples
+   - Include edge cases
+   - Test alternative solutions for consistency
 
-5. Run and test:
+5. Run and validate:
    ```bash
    cargo run --bin p0042
-   cargo test p0042
+   cargo test --bin p0042
    ```
-
-That's it! No need to update any `mod.rs` files or module declarations.
 
 ## Features
 
@@ -70,91 +115,166 @@ That's it! No need to update any `mod.rs` files or module declarations.
 The `src/lib.rs` file provides commonly used data structures and utilities:
 
 - **ListNode**: Singly-linked list with helper methods
-  - `ListNode::from_vec(vec![1, 2, 3])` - Create from vector
-  - `ListNode::to_vec(list)` - Convert to vector
+  ```rust
+  use leetcode::ListNode;
+  
+  // Create from vector
+  let list = ListNode::from_vec(vec![1, 2, 3]);
+  
+  // Convert to vector
+  let vec = ListNode::to_vec(list);
+  ```
 
-- **TreeNode**: Binary tree node
+- **TreeNode**: Binary tree node for tree problems
 
 - **Helper functions**:
   - `print_vec(&vec)` - Pretty print vectors
-  - `time_it(|| your_function())` - Measure execution time
+  - `time_it(|| Solution::your_method())` - Measure execution time
 
-### Example Usage
+### Example Usage in Solutions
 
 ```rust
 use leetcode::ListNode;
 
-// Create a linked list from vector
-let list = ListNode::from_vec(vec![1, 2, 3]);
+struct Solution;
 
-// Convert back to vector for testing
-let result = ListNode::to_vec(some_list);
-assert_eq!(result, vec![1, 2, 3]);
+impl Solution {
+    pub fn add_two_numbers(
+        l1: Option<Box<ListNode>>,
+        l2: Option<Box<ListNode>>
+    ) -> Option<Box<ListNode>> {
+        // Use ListNode utilities
+        // Implementation here
+    }
+}
+
+fn main() {
+    // Test with ListNode helpers
+    let l1 = ListNode::from_vec(vec![2, 4, 3]);
+    let l2 = ListNode::from_vec(vec![5, 6, 4]);
+    let result = Solution::add_two_numbers(l1, l2);
+    println!("Result: {:?}", ListNode::to_vec(result));
+}
 ```
 
 ## Problem Naming Convention
 
-- Format: `p{number:04}.rs` (e.g., `p0001.rs`, `p0042.rs`, `p1337.rs`)
-- Zero-padded 4-digit numbers for easy sorting
-- Descriptive comments in file headers
+- **Format**: `p{number:04}.rs` (e.g., `p0001.rs`, `p0042.rs`, `p1337.rs`)
+- **Zero-padded** 4-digit numbers for consistent sorting
+- **Method names** match problem context (e.g., `two_sum`, `add_two_numbers`)
 
-## Workflow Tips
+## Development Workflow
 
 ### Daily Practice Routine
 
 1. **Start a new problem**:
    ```bash
-   cp template.rs src/bin/p$(printf "%04d" 123).rs
+   cp template/template.rs src/bin/p$(printf "%04d" 123).rs
    ```
 
-2. **Develop with quick feedback**:
+2. **Develop iteratively**:
    ```bash
-   cargo run --bin p0123  # Test your solution
-   cargo test p0123       # Run unit tests
+   # Quick testing during development
+   cargo run --bin p0123
+   
+   # Validate with comprehensive tests
+   cargo test --bin p0123
    ```
 
-3. **Compare different approaches**:
-   - Implement multiple solutions in the same file
-   - Use `solution()`, `solution_alt()`, etc.
-   - Benchmark with the `time_it()` helper
+3. **Compare approaches**:
+   - Implement multiple solutions in the same `impl Solution` block
+   - Use descriptive method names (`solution_name`, `solution_name_brute_force`)
+   - Test consistency between approaches
+   - Benchmark with `time_it()` helper
 
 ### Testing Strategy
 
-- **Include multiple test cases** in each solution file
-- **Test edge cases** (empty inputs, single elements, etc.)
-- **Use descriptive test names** that explain the scenario
-- **Add inline examples** in doc comments
+- **Comprehensive coverage**: Test all examples from problem statement
+- **Edge cases**: Empty inputs, single elements, boundary conditions
+- **Method consistency**: If implementing multiple approaches, test they produce same results
+- **Clear assertions**: Use descriptive test function names and `assert_eq!`
+
+Example test structure:
+```rust
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_example1() {
+        assert_eq!(Solution::method_name(input), expected);
+    }
+
+    #[test]
+    fn test_edge_cases() {
+        // Test boundary conditions
+        assert_eq!(Solution::method_name(edge_input), expected);
+    }
+
+    #[test]
+    fn test_alternative_consistency() {
+        // If multiple solutions exist, test they agree
+        let input = /* test case */;
+        assert_eq!(
+            Solution::method_name(input.clone()),
+            Solution::method_name_alt(input)
+        );
+    }
+}
+```
+
+## Performance Optimization
+
+- **Development**: Use `cargo run` for quick iteration
+- **Benchmarking**: Use `cargo build --release` for optimized performance testing
+- **Profiling**: Use `time_it()` helper to measure method execution time
+- **Multiple approaches**: Implement both optimal and educational (e.g., brute force) solutions
+
+## Examples in This Repository
+
+### Basic Problems
+- **p0001.rs** - Two Sum: HashMap optimization vs brute force
+- **p0002.rs** - Add Two Numbers: Linked list manipulation with iterative and recursive approaches
+
+### Advanced Problems  
+- **p3025.rs** - Find the Number of Ways to Place People I: Geometric algorithms with comprehensive edge case testing
+
+Each solution demonstrates:
+- Clean `impl Solution` structure
+- Comprehensive test coverage
+- Multiple solution approaches when educational
+- Time/space complexity analysis
+- Proper use of common utilities
 
 ## Dependencies
 
-Current project uses only standard library. To add external dependencies:
+This project primarily uses Rust's standard library. Common imports include:
+```rust
+use std::collections::{HashMap, HashSet, VecDeque, BinaryHeap};
+use std::cmp::{min, max, Ordering};
+use leetcode::{ListNode, TreeNode};
+```
 
+To add external dependencies, update `Cargo.toml`:
 ```toml
 [dependencies]
 # Example: for additional data structures
-indexmap = "1.0"
+indexmap = "2.0"
 ```
-
-## Performance Tips
-
-- Use `cargo build --release` for optimized builds when benchmarking
-- The `time_it()` helper function can measure execution time
-- Consider multiple approaches (brute force vs. optimized) for learning
 
 ## Contributing
 
 When adding new solutions:
 
-1. Follow the existing code style
-2. Include comprehensive test cases
-3. Add clear problem description and examples
-4. Consider multiple solution approaches when educational
+1. **Follow the `impl Solution` pattern** consistently
+2. **Include comprehensive test cases** covering all examples and edge cases  
+3. **Add clear documentation** with problem description and complexity analysis
+4. **Consider multiple approaches** when educational value exists
+5. **Use descriptive naming** for methods and test functions
 
-## Examples
+## Guidelines for AI Agents
 
-Check out the included examples:
-- `p0001.rs` - Two Sum (HashMap approach + brute force comparison)
-- `p0002.rs` - Add Two Numbers (Linked list manipulation)
+See `AGENTS.md` for detailed guidelines on code structure, testing patterns, and implementation standards.
 
 ## License
 
